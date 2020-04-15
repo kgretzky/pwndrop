@@ -1,0 +1,612 @@
+:root {
+    --pwn-sslite: #648cbb;
+    --pwn-slite: #4a688c;
+    --pwn-slite-trans: #4a688c80;
+	--pwn-lite: #314b69;
+    --pwn-med: #253c54;
+    --pwn-med2: #1d3146;
+    --pwn-dark: #152433;
+    --pwn-dark-trans: #15243380;
+    --pwn-black-hr: #0d161f80;
+    --pwn-black: #0d161f;
+}
+
+body {
+	font-family: "Ubuntu", Helvetica, Arial, sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	color: #ddd;
+    overflow-x: hidden;
+    background-color: var(--pwn-dark);
+}
+
+/* home */
+
+#app {
+	margin-top: 60px;
+}
+
+h1,
+h2 {
+	font-weight: normal;
+}
+
+ul {
+	list-style-type: none;
+	padding: 0;
+}
+
+li {
+	display: inline-block;
+	margin: 0 10px;
+}
+
+a {
+	color: #42b983;
+}
+
+hr {
+    border-top: 1px solid var(--pwn-black-hr);
+}
+
+.top-left-bar {
+	position: absolute;
+	top: 15px;
+	left: 15px;
+}
+
+.top-right-bar {
+	position: absolute;
+	top: 15px;
+	right: 15px;
+}
+
+.btn-circle {
+	width: 40px;
+	height: 40px;
+	padding: 6px 0px;
+	border-radius: 20px;
+	text-align: center;
+	font-size: 20px;
+	line-height: 1.32857;
+}
+
+.btn {
+	border-radius: 20px;
+}
+
+.btn-login {
+    border-radius: 21px;
+    width: 100%;
+}
+
+.form-control {
+    background-color: var(--pwn-black);
+}
+
+input.form-control {
+	background-color: var(--pwn-black);
+	border-radius: 21px;
+	border: 1px solid var(--pwn-med);
+	color: #aaa;
+}
+
+input.form-control:focus {
+	color: #ddd;
+	background-color: var(--pwn-dark);
+	border-color: var(--pwn-lite);
+}
+
+.btn-outline-secondary {
+    color: var(--pwn-slite);
+    border-color: var(--pwn-slite);
+}
+
+.btn-outline-secondary:hover {
+    color: #fff;
+    background-color: var(--pwn-slite);
+    border-color: var(--pwn-slite);
+}
+
+.btn-outline-secondary:not(:disabled):not(.disabled):active, .btn-outline-secondary:not(:disabled):not(.disabled).active, .show>.btn-outline-secondary.dropdown-toggle {
+    color: #fff;
+    background-color: var(--pwn-slite);
+    border-color: var(--pwn-slite);
+}
+
+.btn-outline-secondary:focus, .btn-outline-secondary.focus {
+    -webkit-box-shadow: 0 0 0 0.2rem var(--pwn-slite-trans);
+    box-shadow: 0 0 0 0.2rem var(--pwn-slite-trans);
+}
+
+.btn-secondary {
+    background-color: var(--pwn-med);
+    border-color: var(--pwn-med);
+}
+
+.btn-secondary:hover {
+    background-color: var(--pwn-dark);
+    border-color: var(--pwn-dark);
+}
+
+.btn-secondary:focus {
+    background-color: var(--pwn-dark);
+    border-color: var(--pwn-dark);
+}
+
+.btn-secondary:active, .btn-secondary.active {
+    background-color: var(--pwn-black);
+    border-color: var(--pwn-black);
+}
+
+.btn-secondary:not(:disabled):not(.disabled):active, .btn-secondary:not(:disabled):not(.disabled).active, .show>.btn-secondary.dropdown-toggle {
+    color: #fff;
+    background-color: var(--pwn-black);
+    border-color: var(--pwn-black);
+}
+
+.btn-secondary:not(:disabled):not(.disabled):active:focus, .btn-secondary:not(:disabled):not(.disabled).active:focus, .show>.btn-secondary.dropdown-toggle:focus {
+    -webkit-box-shadow: 0 0 0 0.2rem var(--pwn-dark-trans);
+    box-shadow: 0 0 0 0.2rem var(--pwn-dark-trans);
+}
+
+.btn-secondary:focus,
+.btn-secondary.focus {
+    -webkit-box-shadow: 0 0 0 0.2rem var(--pwn-dark-trans);
+    box-shadow: 0 0 0 0.2rem var(--pwn-dark-trans);
+}
+
+.big-icon {
+	font-size: 120px;
+}
+
+.modal-content {
+    border-radius: 20px;
+    border: 1px solid var(--pwn-lite);
+    background-color: var(--pwn-med2);
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--pwn-lite);
+}
+
+.modal-footer {
+    border-top: 1px solid var(--pwn-lite);
+}
+
+.form-control.error {
+    border-color: #E84444;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(232,68,68,.6);
+}
+
+.login-status {
+    text-align: center;
+    font-weight: bold;
+    color: #e84444;
+}
+
+.form-error {
+    color: #E84444;
+    padding-top: 8px;
+    padding-left: 10px;
+}
+
+a.help-link {
+    color: #507fb1;
+    /* text-decoration: dashed; */
+    text-decoration-line: underline;
+}
+
+a.help-link:hover {
+    color: #73a0d0;
+    text-decoration-line: underline;
+}
+
+.server-status {
+    color: var(--pwn-lite);
+}
+
+.bg-title {
+    position: absolute;
+    width: 100%;
+    left: 50%;
+    top: 5px;
+    z-index: -100;
+}
+
+.bg-title img {
+    width: 180px;
+    margin-left: -90px;
+}
+
+.bg-footer {
+    position: fixed;
+    left: 10px;
+    bottom: 5px;
+    color: var(--pwn-slite);
+    font-size: 11px;
+    z-index: 10;
+}
+
+.bg-footer a {
+    color: var(--pwn-sslite);
+}
+
+.bg-version {
+    position: fixed;
+    right: 10px;
+    bottom: 5px;
+    color: var(--pwn-slite);
+    font-size: 11px;
+    z-index: 10;
+}
+
+.bg-logo {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    left: 0px;
+    top: 0px;
+    z-index: -1000;
+    background-image: url("img/pwndrop.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 20%;
+}
+
+/* file.vue */
+
+a:hover {
+	text-decoration: none;
+}
+
+.upload-item {
+	position: relative;
+	background-color: var(--pwn-med);
+	margin: 10px 0px;
+	padding: 10px 20px;
+	width: 100%;
+    border-radius: 20px;
+    border: 4px solid var(--pwn-med);
+    transition: opacity 0.4s, background-color 0.4s;
+}
+
+.upload-disabled {
+    opacity: 0.25;
+}
+
+.upload-paused {
+    background-color: initial;
+}
+
+.upload-item .upload-desc {
+	padding-right: 48px;
+	padding-left: 114px;
+	line-height: 32px;
+}
+
+.upload-item .title {
+	font-size: large;
+	font-weight: 600;
+}
+
+.upload-item .file-progress {
+	margin: 5px 0px 0px 0px;
+	padding: 0px 10px;
+}
+
+.upload-item .controls {
+	position: absolute;
+	/*top: 12px;*/
+	right: 20px;
+}
+
+.upload-item .clip {
+    white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.upload-item .settings {
+	position: absolute;
+	left: 20px;
+}
+
+.upload-item .upload-info {
+	color: var(--pwn-slite);
+	line-height: 32px;
+	margin-top: 5px;
+}
+
+.btn-control {
+	border-radius: 30px;
+	width: 30px;
+}
+
+.btn-circle.btn-xl {
+	width: 70px;
+	height: 70px;
+	padding: 10px 16px;
+	border-radius: 35px;
+	font-size: 24px;
+	line-height: 1.33;
+}
+
+/*
+.btn-circle-file {
+	width: 30px;
+	height: 30px;
+	padding: 6px 0px;
+	border-radius: 15px;
+	text-align: center;
+	font-size: 12px;
+	line-height: 1.42857;
+}*/
+
+.btn-circle-sm {
+	width: 28px;
+	height: 28px;
+	padding: 3px 0px;
+	border-radius: 14px;
+	text-align: center;
+	font-size: 12px;
+	line-height: 1;
+}
+
+.btn-gray {
+    color: var(--pwn-dark);
+    background-color: var(--pwn-slite);
+    border-color: var(--pwn-slite);
+}
+
+.btn-gray:hover {
+    color: var(--pwn-lite);
+    background-color: var(--pwn-slite);
+    border-color: var(--pwn-slite);
+}
+
+.btn-copy-link {
+	border-radius: 16px;
+}
+
+.btn-col {
+	margin-right: 5px;
+}
+
+.text-dim {
+    opacity: 0.25;
+}
+
+.trans {
+    transition-duration: 0.4s
+}
+
+/* fileview.vue */
+
+#dropzone {
+	background: gray;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 999;
+    opacity: 0;
+    background-image: url("img/pwndrop-flash.png");
+    background-repeat: no-repeat;
+    background-position: center;
+	visibility: hidden;
+}
+
+#dropzone.drag {
+	opacity: 0.75;
+	visibility: visible;
+}
+
+#sub-dropzone {
+	width: 100%;
+	margin: 0px 20px;
+	height: 120px;
+	line-height: 110px;
+	background: var(--pwn-dark);
+    border: 4px dashed var(--pwn-slite);;
+    border-radius: 20px;
+	color: var(--pwn-slite);
+}
+
+#sub-dropzone input {
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	opacity: 0;
+	cursor: pointer;
+	text-indent: -999px;
+}
+
+#sub-dropzone .icon {
+	position: fixed;
+	left: 50%;
+	font-size: 48px;
+	margin-left: -24px;
+}
+
+#sub-dropzone.drag {
+	background: var(--pwn-med);
+	color: var(--pwn-sslite);
+	border-color: var(--pwn-sslite);
+}
+
+.row-file {
+    margin-bottom: 10px;
+    padding-top: 10px;
+}
+
+.btn-file {
+	position: relative;
+	overflow: hidden;
+	border-radius: 20px;
+}
+
+.btn-file input[type="file"] {
+	position: absolute;
+	top: 0;
+	right: 0;
+	min-width: 100%;
+	min-height: 100%;
+	font-size: 100px;
+	text-align: right;
+	filter: alpha(opacity=0);
+	opacity: 0;
+	outline: none;
+	cursor: pointer;
+	display: block;
+}
+
+/*
+.btn-file span {
+    cursor: pointer;
+}
+
+.file-field input[type="file"] {
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	cursor: pointer;
+	opacity: 0;
+}*/
+
+.sub-item {
+	width: 100%;
+}
+
+.sub-item .desc {
+	padding-right: 48px;
+	line-height: 32px;
+}
+
+.sub-item .title {
+	font-size: large;
+	font-weight: 600;
+}
+
+.sub-item .controls {
+	position: absolute;
+	right: 20px;
+}
+
+.sub-info {
+	margin: -10px 10px 5px;
+	width: 100%;
+	text-align: center;
+	color: var(--pwn-slite);
+}
+
+#dropzone input.drag {
+	visibility: visible;
+}
+
+.input-group-append .btn {
+	border-radius: 21px;
+}
+
+.upload-list {
+	/*transition: all 0.5s;*/
+	overflow: hidden;
+}
+
+.upload-list-move {
+	transition: all 0.5s;
+}
+
+.upload-block {
+	transition: all 0.5s;
+	/*display: block;*/
+}
+
+.upload-list-enter {
+	opacity: 0;
+	transform: translateX(-240px);
+}
+
+.upload-list-leave-to {
+	opacity: 0;
+	transform: translateX(240px);
+}
+
+.upload-list-leave-active {
+	position: absolute;
+}
+
+.sub-modal-anim-enter-active,
+.sub-modal-anim-leave-active {
+	transition: opacity 0.2s ease;
+}
+.sub-modal-anim-enter,
+.sub-modal-anim-leave-to {
+	opacity: 0;
+}
+
+@media (min-width: 576px) {
+	.modal-lg {
+		max-width: 550px;
+		margin: 1.75rem auto;
+	}
+}
+
+@media (min-width: 992px) {
+	.modal-lg {
+		max-width: 800px;
+	}
+}
+
+@media (min-width: 576px) {
+    .label-help {
+        padding-right: 0px;
+    }
+}
+
+.label-qmark {
+    float: right;
+    padding-top: 3px;
+    color: var(--pwn-lite);
+}
+
+.row-info {
+    text-align: center;
+    font-size: small;
+}
+
+/* login.vue */
+
+.vertical-center {
+	min-height: 100%;
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+}
+
+.login-panel {
+	position: relative;
+    border: 1px solid var(--pwn-lite);
+    background-color: var(--pwn-med2);
+	margin: 10px 0px;
+	padding: 10px 20px;
+	width: 100%;
+	border-radius: 20px;
+	transition: opacity 0.4s;
+}
+
+.v-middle {
+	margin-top: auto;
+	margin-bottom: auto;
+}
+
+.image-logo {
+	margin: 15px auto;
+}

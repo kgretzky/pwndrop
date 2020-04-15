@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    <title>pwndrop :: home</title>
+
+	<link rel="icon" href="./favicon.png">
+    <link href="./deps/bootstrap.min.css" rel="stylesheet">
+    <link href="./deps/bootstrap-vue.min.css" rel="stylesheet">
+    <link href="./deps/animate.min.css" rel="stylesheet">
+    <link href="./deps/fontawesome/css/all.min.css" rel="stylesheet">
+    <link href="./deps/woff.css" rel="stylesheet">
+    <link href="./deps/woff2.css" rel="stylesheet">
+    <link href="./pages/style.css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="app">
+        <router-view></router-view>
+    </div>
+
+    <script src="./deps/vue.js"></script>
+    <script src="./deps/popper.min.js"></script>
+    <script src="./deps/jquery.min.js"></script>
+    <script src="./deps/vee-validate.js"></script>
+    <script src="./deps/axios.min.js"></script>
+    <script src="./deps/bootstrap.min.js"></script>
+    <script src="./deps/bootstrap-vue.min.js"></script>
+    <script src="./deps/vue-router.js"></script>
+    <script src="./deps/clipboard.min.js"></script>
+
+    <script src="./pages/main.js"></script>
+    <script src="./pages/vars.js"></script>
+
+    <script src="./pages/app.vue.js"></script>
+    <script src="./pages/components/create_account.vue.js"></script>
+    <script src="./pages/components/file_view.vue.js"></script>
+    <script src="./pages/components/file.vue.js"></script>
+    <script src="./pages/components/login.vue.js"></script>
+
+    <script>
+        Vue.use(BootstrapVue);
+        Vue.use(VueRouter);
+        Vue.use(VeeValidate);
+
+        Vue.config.devtools = true;
+        
+        const routes = [
+        {
+            path: '/',
+            component: appFileView
+        },
+        {
+            path: '/create_account',
+            component: appCreateAccount
+        },
+        {
+            path: '/login',
+            component: appLogin
+        }
+        ]
+
+        let router = new VueRouter({
+            routes: routes,
+        })
+
+        router.beforeEach((to, from, next) => {
+            next()
+        })
+
+        var app = new Vue({
+            el: '#app',
+            router: router,
+            render: h => h(appHome)
+        })
+    </script>
+
+</body>
+
+</html>
