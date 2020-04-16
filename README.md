@@ -55,7 +55,7 @@ Make sure there aren't any DNS or HTTP(S) servers running before you attempt to 
 
 I do not recommend running oneliners, before downloading and checking the script code, but if you are really in a hurry, here it is:
 ```
-curl https://github.com/kgretzky/pwndrop/install_linux.sh | sudo bash
+curl https://raw.githubusercontent.com/kgretzky/pwndrop/master/install_linux.sh | sudo bash
 ```
 
 This will download the latest amd64 release binary and fully install a daemon running in a background.
