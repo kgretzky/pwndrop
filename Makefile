@@ -18,7 +18,7 @@ clean:
 
 install:
 	@echo "*** stopping pwndrop"
-	@$(BUILD_DIR)/$(TARGET) stop
+	-@$(BUILD_DIR)/$(TARGET) stop
 	@echo "*** installing and starting pwndrop"
 	@$(BUILD_DIR)/$(TARGET) install && $(BUILD_DIR)/$(TARGET) start
 	@$(BUILD_DIR)/$(TARGET) status
