@@ -36,6 +36,12 @@ If you want to learn how to use **pwndrop** or you want to learn what new featur
 
 https://breakdev.org/pwndrop
 
+## Video guide
+
+Take a look at the fantastic video made by Luke Turvey ([@TurvSec](https://twitter.com/TurvSec)), which fully explains how to get started using **pwndrop**.
+
+[![File and Phishing Payload Hosting using PwnDrop (Red Team) - Luke Turvey](https://img.youtube.com/vi/e3veSyIFvOE/0.jpg)](https://www.youtube.com/watch?v=e3veSyIFvOE)
+
 ## Prerequisites
 
 If you don't yet have the server to deploy to I highly recommend Digital Ocean. The cheapest $5/mo Debian 9 server with 25GB of storage space will work wonders for you. You can use my referral link to [get an extra $100 to spend on your servers in 60 days for free](https://m.do.co/c/50338abc7ffe).
