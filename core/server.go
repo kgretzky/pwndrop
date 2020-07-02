@@ -84,8 +84,9 @@ func NewServer(host string, port_plain int, port_tls int, enable_letsencrypt boo
 	s.srv = &http.Server{
 		Handler:      http.Handler(s),
 		Addr:         hostname,
-		WriteTimeout: 15 * time.Second,
-		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 15 * time.Minute,
+		ReadTimeout:  15 * time.Minute,
+		IdleTimeout:  120 * time.Second,
 		TLSConfig:    tls_cfg,
 	}
 
