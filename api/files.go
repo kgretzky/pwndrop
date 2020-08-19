@@ -20,9 +20,12 @@ func FileOptionsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func FileCreateHandler(w http.ResponseWriter, r *http.Request) {
+
+	_, err_apikey := AuthApiKey(r)
+
 	// #### CHECK IF AUTHENTICATED ####
 	_, err := AuthSession(r)
-	if err != nil {
+	if err != nil && err_apikey != nil {
 		DumpResponse(w, "unauthorized", http.StatusUnauthorized, API_ERROR_BAD_AUTHENTICATION, nil)
 		return
 	}

@@ -106,9 +106,11 @@ func (c *Config) HandleSetup() error {
 		if len(username) > 0 && len(password) > 0 {
 			phash, err := bcrypt.GenerateFromPassword([]byte(password), 10)
 			if err == nil {
+				uak := utils.GenRandomString(32)
 				o := &storage.DbUser{
 					Name:     username,
 					Password: string(phash),
+					ApiKey:   uak,
 				}
 
 				storage.UserDelete(1)

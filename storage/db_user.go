@@ -9,6 +9,7 @@ type DbUser struct {
 	Name       string `json:"name"`
 	SearchName string `json:"search_name" storm:"unique"`
 	Password   string `json:"password"`
+	ApiKey     string `json:"apikey"`
 }
 
 func UserCreate(o *DbUser) (*DbUser, error) {
@@ -56,4 +57,12 @@ func UserDelete(id int) error {
 		return err
 	}
 	return nil
+}
+func UserGetByApiKey(apikey string) (*DbUser, error) {
+        var o DbUser
+        err := db.One("ApiKey", apikey, &o)
+        if err != nil {
+                return nil, err
+        }
+        return &o, nil
 }

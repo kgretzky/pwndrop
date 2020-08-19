@@ -71,7 +71,7 @@ var appLogin = Vue.component("app-login", {
 			url: Config.Hostname + Config.AdminDir + "/" + Config.ApiPath,
 			Username: "",
             Password: "",
-            status: "",
+            status: ""
 		};
 	},
     computed: {
@@ -102,6 +102,7 @@ var appLogin = Vue.component("app-login", {
                     console.log(response);
                     console.log(response.data.data.username);
 					this.mainBus.$emit("loggedIn", response.data.data.username);
+					localStorage.setItem("Authorization", response.data.data.apikey);
 				})
 				.catch(error => {
                     if (error.response.status == 401)
