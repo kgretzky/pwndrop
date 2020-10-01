@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"path/filepath"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -30,11 +31,16 @@ type Server struct {
 	cdb       *CertDb
 	ns        *Nameserver
 	r         *mux.Router
+	blacklist map[string]*BlacklistItem
+	bl_mtx    sync.Mutex
 }
 
 func NewServer(host string, port_plain int, port_tls int, enable_letsencrypt bool, enable_dns bool, ch_exit *chan bool) (*Server, error) {
 	var err error
-	s := &Server{}
+	s := &Server{
+		blacklist: make(map[string]*BlacklistItem),
+		bl_mtx:    sync.Mutex{},
+	}
 
 	hostname := fmt.Sprintf("%s:%d", host, port_plain)
 	hostname_tls := fmt.Sprintf("%s:%d", host, port_tls)
@@ -70,6 +76,23 @@ func NewServer(host string, port_plain int, port_tls int, enable_letsencrypt boo
 		log.Info("autocert: disabled")
 	}
 
+	// set up modern cipher suites
+	/*
+		tls_cfg.MinVersion = tls.VersionTLS12
+		tls_cfg.CipherSuites = []uint16{
+			tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
+			tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+			tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305, // Go 1.8 only
+			tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,   // Go 1.8 only
+			tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+			tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+
+			// Best disabled, as they don't provide Forward Secrecy,
+			// but might be necessary for some clients
+			// tls.TLS_RSA_WITH_AES_256_GCM_SHA384,
+			// tls.TLS_RSA_WITH_AES_128_GCM_SHA256,
+		}*/
+
 	s.wdav, err = NewWebDav(s)
 	if err != nil {
 		return nil, err
@@ -84,9 +107,9 @@ func NewServer(host string, port_plain int, port_tls int, enable_letsencrypt boo
 	s.srv = &http.Server{
 		Handler:      http.Handler(s),
 		Addr:         hostname,
-		WriteTimeout: 15 * time.Minute,
-		ReadTimeout:  15 * time.Minute,
-		IdleTimeout:  120 * time.Second,
+		WriteTimeout: 0,
+		ReadTimeout:  0,
+		IdleTimeout:  5 * time.Second,
 		TLSConfig:    tls_cfg,
 	}
 
@@ -131,6 +154,22 @@ func NewServer(host string, port_plain int, port_tls int, enable_letsencrypt boo
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	log.Debug("%s %s", r.Method, r.URL.Path)
 
+	from_ip := r.RemoteAddr
+	if strings.Contains(from_ip, ":") {
+		from_ip = strings.Split(from_ip, ":")[0]
+	}
+
+	if s.isBlacklisted(from_ip) {
+		err := s.killConnection(w, -1)
+		if err != nil {
+			log.Error("http: %s (%s)", err, from_ip)
+			w.Header().Set("Connection", "close")
+			w.Header().Set("Content-Length", "0")
+			w.WriteHeader(500)
+		}
+		return
+	}
+
 	if !s.isWebDavRequest(r) {
 
 		cookie_name := Cfg.GetCookieName()
@@ -158,6 +197,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 
+			s.addBlacklistHit(from_ip)
 			if len(Cfg.GetRedirectUrl()) > 0 {
 				http.Redirect(w, r, Cfg.GetRedirectUrl(), http.StatusFound)
 				return
@@ -259,4 +299,57 @@ func (s *Server) FileExists(url string) bool {
 		}
 	}
 	return true
+}
+
+func (s *Server) killConnection(w http.ResponseWriter, status int) error {
+	if status > 0 {
+		w.Header().Set("Connection", "close")
+		w.Header().Set("Content-Length", "0")
+		w.WriteHeader(status)
+	}
+
+	hj, ok := w.(http.Hijacker)
+	if !ok {
+		return fmt.Errorf("connection hijacking not supported")
+	}
+	conn, _, err := hj.Hijack()
+	if err != nil {
+		return err
+	}
+	conn.Close()
+	return nil
+}
+
+func (s *Server) isBlacklisted(ip_addr string) bool {
+	s.bl_mtx.Lock()
+	defer s.bl_mtx.Unlock()
+
+	ret := false
+	if bl, ok := s.blacklist[ip_addr]; ok {
+		if bl.hits >= BLACKLIST_HITS_LIMIT {
+			if time.Now().Before(bl.last_hit.Add(BLACKLIST_JAIL_TIME_SECS * time.Second)) {
+				ret = true
+			} else {
+				delete(s.blacklist, ip_addr)
+				return false
+			}
+		}
+		bl.last_hit = time.Now()
+	}
+	return ret
+}
+
+func (s *Server) addBlacklistHit(ip_addr string) {
+	s.bl_mtx.Lock()
+	defer s.bl_mtx.Unlock()
+
+	if bl, ok := s.blacklist[ip_addr]; ok {
+		bl.hits += 1
+	} else {
+		bl := &BlacklistItem{
+			hits:     1,
+			last_hit: time.Now(),
+		}
+		s.blacklist[ip_addr] = bl
+	}
 }

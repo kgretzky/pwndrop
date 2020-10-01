@@ -87,6 +87,7 @@ First of all, make sure you have installed GO with version at least **1.13**: ht
 Then do the following:
 
 ```
+sudo apt-get -y install git make
 git clone https://github.com/kgretzky/pwndrop
 cd pwndrop
 make
