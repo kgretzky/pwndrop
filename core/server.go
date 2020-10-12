@@ -9,7 +9,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-
 	"github.com/gorilla/mux"
 	"golang.org/x/crypto/acme"
 
@@ -195,6 +194,10 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					s.r.ServeHTTP(w, r)
 					return
 				}
+			}
+			if _, err := api.AuthApiKey(r); err == nil {
+				s.r.ServeHTTP(w,r)
+				return
 			}
 
 			s.addBlacklistHit(from_ip)

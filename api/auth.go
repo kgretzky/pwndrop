@@ -57,6 +57,7 @@ func LoginUserHandler(w http.ResponseWriter, r *http.Request) {
 	type LoginResponse struct {
 		Username string `json:"username"`
 		Token    string `json:"token"`
+		ApiKey   string `json:"apikey"`
 	}
 
 	j := LoginRequest{}
@@ -96,6 +97,7 @@ func LoginUserHandler(w http.ResponseWriter, r *http.Request) {
 	resp := &LoginResponse{
 		Username: o.Name,
 		Token:    token,
+		ApiKey:   o.ApiKey,
 	}
 
 	ck := &http.Cookie{
@@ -142,6 +144,8 @@ func ClearSecretSessionHandler(w http.ResponseWriter, r *http.Request) {
 	DumpResponse(w, "ok", http.StatusOK, 0, nil)
 }
 
+
+
 func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	type CreateUserRequest struct {
 		Username string `json:"username"`
@@ -187,9 +191,11 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	uak := utils.GenRandomString(32)
 	o := &storage.DbUser{
 		Name:     j.Username,
 		Password: string(phash),
+		ApiKey: uak,
 	}
 
 	_, err = storage.UserCreate(o)
@@ -205,6 +211,7 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func AuthSession(r *http.Request) (int, error) {
+
 	ck, err := r.Cookie(AUTH_COOKIE_NAME)
 	if err != nil {
 		return -1, err
@@ -223,6 +230,19 @@ func AuthSession(r *http.Request) (int, error) {
 	}
 
 	return s.Uid, nil
+}
+
+func AuthApiKey(r *http.Request) (int, error) {
+	ah := r.Header.Get("Authorization")
+	if len(ah) != 32 {
+		return -1, fmt.Errorf("Unauthorized")
+	}
+	ak, err := storage.UserGetByApiKey(ah)
+	if err != nil {
+		return -1, err
+	}
+	return ak.ID, nil
+
 }
 
 func deleteCookie(name string, w http.ResponseWriter) {
