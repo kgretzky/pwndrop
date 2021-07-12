@@ -64,6 +64,8 @@ func initConfig() error {
 			RedirectUrl: "https://www.youtube.com/watch?v=oHg5SJYRHA0",
 			CookieName:  utils.GenRandomString(4),
 			CookieToken: utils.GenRandomHash(),
+			UsrWhiteList: "",
+			UsrBlackList: "",
 		}
 		_, err = ConfigCreate(o)
 		if err != nil {

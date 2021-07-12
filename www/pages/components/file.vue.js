@@ -60,6 +60,10 @@ var appFile = Vue.component("app-file", {
             <div class="col-auto grow trans" :class="{'text-lg': file.is_paused}">
                 <small>{{ file.url_path }}</small>
             </div>
+            <div class="col-auto grow trans" :class="{'text-lg': file.is_paused}">
+                <small v-if="['', -1].includes(file.downloads_allowed_left) == false">downloads left: {{ file.downloads_allowed_left }}</small>
+                <small v-if="['', -1].includes(file.downloads_allowed_left) == true ">downloads left: unlimited</small>
+            </div>
 			<div class="d-none d-sm-block col text-right clip trans" :class="{'text-lg': file.is_paused}">
 				<small>{{ file.mime_type }}</small>
 			</div>

@@ -1,12 +1,14 @@
 package storage
 
 type DbConfig struct {
-	ID          int    `json:"id" storm:"id"`
-	Hostname    string `json:"hostname"`
-	SecretPath  string `json:"secret_path"`
-	RedirectUrl string `json:"redirect_url"`
-	CookieName  string `json:"cookie_name"`
-	CookieToken string `json:"cookie_token"`
+	ID           int    `json:"id" storm:"id"`
+	Hostname     string `json:"hostname"`
+	SecretPath   string `json:"secret_path"`
+	RedirectUrl  string `json:"redirect_url"`
+	CookieName   string `json:"cookie_name"`
+	CookieToken  string `json:"cookie_token"`
+	UsrWhiteList string `json:"white_list"`
+	UsrBlackList string `json:"black_list"`
 }
 
 func ConfigCreate(o *DbConfig) (*DbConfig, error) {

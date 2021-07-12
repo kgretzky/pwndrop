@@ -13,12 +13,15 @@ import (
 )
 
 const (
-	INI_SERVER         = "pwndrop"
-	INI_VAR_LISTEN_IP  = "listen_ip"
-	INI_VAR_HTTP_PORT  = "http_port"
-	INI_VAR_HTTPS_PORT = "https_port"
-	INI_VAR_DATA_DIR   = "data_dir"
-	INI_VAR_ADMIN_DIR  = "admin_dir"
+	INI_SERVER           = "pwndrop"
+	INI_VAR_LISTEN_IP    = "listen_ip"
+	INI_VAR_HTTP_PORT    = "http_port"
+	INI_VAR_HTTPS_PORT   = "https_port"
+	INI_VAR_DATA_DIR     = "data_dir"
+	INI_VAR_ADMIN_DIR    = "admin_dir"
+	INI_VAR_DOWNLOAD_DIR = "downloads_dir"
+	INI_VAR_LOGFILE      = "logfile"
+	INI_TRUST_FORWARDED  = "trust_x_forwarded_for"
 
 	INI_SETUP              = "setup"
 	INI_SETUP_USERNAME     = "username"
@@ -168,6 +171,21 @@ func (c *Config) GetSecretPath() string {
 	return o.SecretPath
 }
 
+func (c *Config) GetDownloadDir() string {
+	dir, _ := c.Get(INI_VAR_DOWNLOAD_DIR)
+	return dir
+}
+
+func (c *Config) GetLogFile() string {
+	file, _ := c.Get(INI_VAR_LOGFILE)
+	return file
+}
+
+func (c *Config) GetTrustForwarded() bool {
+	trust_x_forwarded_for, _ := c.Get(INI_TRUST_FORWARDED)
+	return trust_x_forwarded_for == "true"
+}
+
 func (c *Config) GetDataDir() string {
 	dir, _ := c.Get(INI_VAR_DATA_DIR)
 	return c.joinPath(c.exec_dir, dir)
@@ -200,6 +218,22 @@ func (c *Config) GetRedirectUrl() string {
 		return ""
 	}
 	return o.RedirectUrl
+}
+
+func (c *Config) GetUserWhiteList() string {
+	o, err := storage.ConfigGet(1)
+	if err != nil {
+		return ""
+	}
+	return o.UsrWhiteList
+}
+
+func (c *Config) GetUserBlackList() string {
+	o, err := storage.ConfigGet(1)
+	if err != nil {
+		return ""
+	}
+	return o.UsrBlackList
 }
 
 func (c *Config) Get(key string) (string, error) {

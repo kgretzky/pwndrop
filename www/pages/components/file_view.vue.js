@@ -1,5 +1,5 @@
 var appFileView = Vue.component("app-file-view", {
-    template: `
+	template: `
 	<div>
 		<b-modal
 			v-model="editShow"
@@ -13,28 +13,28 @@ var appFileView = Vue.component("app-file-view", {
 			<form>
 				<div class="form-group row">
 					<label for="edit-name" class="col-sm-3 col-form-label label-help">Name:
-                        <i class="fas fa-question-circle label-qmark" v-tooltip:bottom="'Friendly name for your eyes only'"></i>
-                    </label>
+						<i class="fas fa-question-circle label-qmark" v-tooltip:bottom="'Friendly name for your eyes only'"></i>
+					</label>
 					<div class="col-sm-9">
 						<input
 							type="text"
 							class="form-control"
 							id="edit-name"
 							spellcheck="false"
-                            v-model="file_edit.name"
-                            name="display-name"
-                            v-validate="'required'"
-                            v-bind:class="{'form-control': true, 'error': errors.has('display-name') }"
-                        >
-                        <div v-show="errors.has('display-name')" class="form-error"">{{ errors.first('display-name') }}</div>
+							v-model="file_edit.name"
+							name="display-name"
+							v-validate="'required'"
+							v-bind:class="{'form-control': true, 'error': errors.has('display-name') }"
+						>
+						<div v-show="errors.has('display-name')" class="form-error"">{{ errors.first('display-name') }}</div>
 					</div>
 				</div>
 				<div class="form-group row">
-                    <label for="edit-mime" class="col-sm-3 col-form-label label-help">
-                        <a class="help-link" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Complete_list_of_MIME_types" target="_blank">
-                        MIME Type:</a>
-                        <i class="fas fa-question-circle label-qmark" v-tooltip:bottom="'File will be retrieved with the following MIME type'"></i>
-                    </label>
+					<label for="edit-mime" class="col-sm-3 col-form-label label-help">
+						<a class="help-link" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Complete_list_of_MIME_types" target="_blank">
+						MIME Type:</a>
+						<i class="fas fa-question-circle label-qmark" v-tooltip:bottom="'File will be retrieved with the following MIME type'"></i>
+					</label>
 					<div class="col-sm-9">
 						<div class="input-group">
 							<input
@@ -43,10 +43,10 @@ var appFileView = Vue.component("app-file-view", {
 								class="form-control"
 								id="edit-mime"
 								spellcheck="false"
-                                v-model="file_edit.mime_type"
-                                name="mime-type"
-                                v-validate="'required'"
-                                v-bind:class="{'form-control': true, 'error': errors.has('mime-type') }"
+								v-model="file_edit.mime_type"
+								name="mime-type"
+								v-validate="'required'"
+								v-bind:class="{'form-control': true, 'error': errors.has('mime-type') }"
 							>
 							<div class="input-group-append">
 								<button
@@ -56,53 +56,71 @@ var appFileView = Vue.component("app-file-view", {
 								>
 									<i class="fas fa-undo"></i>
 								</button>
-                            </div>
-                        </div>
-                        <div v-show="errors.has('mime-type')" class="form-error">{{ errors.first('mime-type') }}</div>
+							</div>
+						</div>
+						<div v-show="errors.has('mime-type')" class="form-error">{{ errors.first('mime-type') }}</div>
 					</div>
 				</div>
 				<div class="form-group row">
 					<label for="edit-http-path" class="col-sm-3 col-form-label label-help">Path:
-                        <i class="fas fa-question-circle label-qmark" v-tooltip:bottom="'URL path when sharing it over HTTP or WebDAV. Paths for WebDAV must be under a subdirectory (e.g. /subdir/payload.docx)'"></i>
-                    </label>
+						<i class="fas fa-question-circle label-qmark" v-tooltip:bottom="'URL path when sharing it over HTTP or WebDAV. Paths for WebDAV must be under a subdirectory (e.g. /subdir/payload.docx)'"></i>
+					</label>
 					<div class="col-sm-9">
 						<input
 							type="text"
 							class="form-control"
 							id="edit-http-path"
 							spellcheck="false"
-                            v-model="file_edit.url_path"
-                            name="url-path"
-                            v-validate="'required'"
-                            v-bind:class="{'form-control': true, 'error': errors.has('url-path') }"
-                        >
-                        <div v-show="errors.has('url-path')" class="form-error">{{ errors.first('url-path') }}</div>
+							v-model="file_edit.url_path"
+							name="url-path"
+							v-validate="'required'"
+							v-bind:class="{'form-control': true, 'error': errors.has('url-path') }"
+						>
+						<div v-show="errors.has('url-path')" class="form-error">{{ errors.first('url-path') }}</div>
 					</div>
 				</div>
 				<div class="form-group row">
 					<label for="edit-redirect-path" class="col-sm-3 col-form-label label-help">Redirect Path:
-                        <i class="fas fa-question-circle label-qmark" v-tooltip:bottom="'URL path which the request will be redirected to. Useful if you want to spoof the extension (e.g. /subdir/payload.docx.exe)'"></i>
-                    </label>
+						<i class="fas fa-question-circle label-qmark" v-tooltip:bottom="'URL path which the request will be redirected to. Useful if you want to spoof the extension (e.g. /subdir/payload.docx.exe)'"></i>
+					</label>
 					<div class="col-sm-9">
-                        <div class="input-group">
-                            <input
-                                type="text"
-                                class="form-control"
-                                id="edit-redirect-path"
-                                spellcheck="false"
-                                v-model="file_edit.redirect_path"
-                                name="redirect-path"
-                            >
-                            <div class="input-group-append">
-                                <button
-                                    class="btn btn-secondary"
-                                    type="button"
-                                    @click="file_edit.redirect_path = file_edit.url_path"
-                                >
-                                    <i class="fas fa-copy"></i>
-                                </button>
-                            </div>
-                        </div>
+						<div class="input-group">
+							<input
+								type="text"
+								class="form-control"
+								id="edit-redirect-path"
+								spellcheck="false"
+								v-model="file_edit.redirect_path"
+								name="redirect-path"
+							>
+							<div class="input-group-append">
+								<button
+									class="btn btn-secondary"
+									type="button"
+									@click="file_edit.redirect_path = file_edit.url_path"
+								>
+									<i class="fas fa-copy"></i>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="form-group row">
+					<label for="edit-downloads-allowed-left" class="col-sm-3 col-form-label label-help">Downloads allowed left:
+						<i class="fas fa-question-circle label-qmark" v-tooltip:bottom="'The number of times that this payload can be downloaded. Empty for unlimited'"></i>
+					</label>
+					<div class="col-sm-9">
+						<input
+							type="number"
+							class="form-control"
+							id="edit-downloads-allowed-left"
+							spellcheck="false"
+							v-model="file_edit.downloads_allowed_left"
+							name="downloads-allowed-left"
+							@keypress="isNumber($event)"
+							v-bind:class="{'form-control': true, 'error': errors.has('downloads-allowed-left') }"
+						>
+						<div v-show="errors.has('downloads-allowed-left')" class="form-error"">{{ errors.first('downloads-allowed-left') }}</div>
 					</div>
 				</div>
 				<hr>
@@ -139,21 +157,21 @@ var appFileView = Vue.component("app-file-view", {
 							>
 						</div>
 					</div>
-                    <div class="sub-item" v-else key="uploaded">
-                        <div class="sub-info">
-                            <small>Facade file</small>
-                        </div>
-                        <div class="form-group row desc">
-                            <label for="edit-sub-name" class="col-sm-3 col-form-label label-help">
-                                Name:</a>
-                                <i class="fas fa-question-circle label-qmark" v-tooltip:bottom="'Facade name for display purposes only'"></i>
-                            </label>
+					<div class="sub-item" v-else key="uploaded">
+						<div class="sub-info">
+							<small>Facade file</small>
+						</div>
+						<div class="form-group row desc">
+							<label for="edit-sub-name" class="col-sm-3 col-form-label label-help">
+								Name:</a>
+								<i class="fas fa-question-circle label-qmark" v-tooltip:bottom="'Facade name for display purposes only'"></i>
+							</label>
 							<div class="col">
-                                <input type="text" class="form-control" spellcheck="false" v-model="file_edit.sub_name"
-                                name="sub-name"
-                                v-validate="'required'"
-                                v-bind:class="{'form-control': true, 'error': errors.has('sub-name') }">
-                                <div v-show="errors.has('sub-name')" class="form-error">{{ errors.first('sub-name') }}</div>
+								<input type="text" class="form-control" spellcheck="false" v-model="file_edit.sub_name"
+								name="sub-name"
+								v-validate="'required'"
+								v-bind:class="{'form-control': true, 'error': errors.has('sub-name') }">
+								<div v-show="errors.has('sub-name')" class="form-error">{{ errors.first('sub-name') }}</div>
 							</div>
 							<div class="d-none d-sm-block col-auto shrink">
 								<span class="fsize">{{ file_edit.sub_size | prettyBytes }}</span>
@@ -166,39 +184,39 @@ var appFileView = Vue.component("app-file-view", {
 									<i class="fas fa-times"></i>
 								</button>
 							</div>
-                        </div>
-                        <div class="form-group row desc">
-                            <label for="edit-sub-mime" class="col-sm-3 col-form-label label-help">
-                                <a class="help-link" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Complete_list_of_MIME_types" target="_blank">
-                                MIME Type:</a>
-                                <i class="fas fa-question-circle label-qmark" v-tooltip:bottom="'Facade file will be retrieved with the following MIME type'"></i>
-                            </label>
-                            <div class="col-sm-9">
-                                <div class="input-group">
-                                    <input
-                                        type="text"
-                                        ref="editSubMime"
-                                        class="form-control"
-                                        id="edit-sub-mime"
-                                        spellcheck="false"
-                                        v-model="file_edit.sub_mime_type"
-                                        name="sub-mime-type"
-                                        v-validate="'required'"
-                                        v-bind:class="{'form-control': true, 'error': errors.has('sub-mime-type') }"
-                                    >
-                                    <div class="input-group-append">
-                                        <button
-                                            class="btn btn-secondary"
-                                            type="button"
-                                            @click="file_edit.sub_mime_type = file_edit.orig_mime_type"
-                                        >
-                                            <i class="fas fa-undo"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div v-show="errors.has('sub-mime-type')" class="form-error">{{ errors.first('sub-mime-type') }}</div>
-                            </div>
-                        </div>
+						</div>
+						<div class="form-group row desc">
+							<label for="edit-sub-mime" class="col-sm-3 col-form-label label-help">
+								<a class="help-link" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Complete_list_of_MIME_types" target="_blank">
+								MIME Type:</a>
+								<i class="fas fa-question-circle label-qmark" v-tooltip:bottom="'Facade file will be retrieved with the following MIME type'"></i>
+							</label>
+							<div class="col-sm-9">
+								<div class="input-group">
+									<input
+										type="text"
+										ref="editSubMime"
+										class="form-control"
+										id="edit-sub-mime"
+										spellcheck="false"
+										v-model="file_edit.sub_mime_type"
+										name="sub-mime-type"
+										v-validate="'required'"
+										v-bind:class="{'form-control': true, 'error': errors.has('sub-mime-type') }"
+									>
+									<div class="input-group-append">
+										<button
+											class="btn btn-secondary"
+											type="button"
+											@click="file_edit.sub_mime_type = file_edit.orig_mime_type"
+										>
+											<i class="fas fa-undo"></i>
+										</button>
+									</div>
+								</div>
+								<div v-show="errors.has('sub-mime-type')" class="form-error">{{ errors.first('sub-mime-type') }}</div>
+							</div>
+						</div>
 					</div>
 				</transition>
 			</form>
@@ -220,12 +238,12 @@ var appFileView = Vue.component("app-file-view", {
 					</button>
 				</form>
 			</div>
-        </div>
-        <div class="row row-info">
-            <div class="server-status col-xs-12 col-sm-8 offset-sm-2 col-md-6 offset-md-3">
-                free: <strong>{{ server_info.disk_free | prettyBytes }}</strong> &bull; used: <strong>{{ server_info.disk_used | prettyBytes }}</strong>
-            </div>
-        </div>
+		</div>
+		<div class="row row-info">
+			<div class="server-status col-xs-12 col-sm-8 offset-sm-2 col-md-6 offset-md-3">
+				free: <strong>{{ server_info.disk_free | prettyBytes }}</strong> &bull; used: <strong>{{ server_info.disk_used | prettyBytes }}</strong>
+			</div>
+		</div>
 		<!-- 		<button @click="doShuffle()">Shuffle</button>
 		-->
 		<transition-group name="upload-list">
@@ -239,11 +257,11 @@ var appFileView = Vue.component("app-file-view", {
 				></app-file>
 			</div>
 		</transition-group>
-    </div>
-    `,
-    $_veeValidate: {
-        validator: "new"
-    },
+	</div>
+	`,
+	$_veeValidate: {
+		validator: "new"
+	},
 	data() {
 		return {
 			url: Config.Hostname + Config.AdminDir + "/" + Config.ApiPath,
@@ -251,13 +269,13 @@ var appFileView = Vue.component("app-file-view", {
 			isSubDragging: false,
 			editShow: false,
 			uploads: [],
-            next_key: 0,
+			next_key: 0,
 			file_edit: {
 				create_time: 0,
 				fsize: 0,
 				id: 0,
-                mime_type: "",
-                sub_mime_type: "",
+				mime_type: "",
+				sub_mime_type: "",
 				name: "",
 				orig_mime_type: "",
 				ref_sub_file: 0,
@@ -265,22 +283,44 @@ var appFileView = Vue.component("app-file-view", {
 				sub_name: "",
 				sub_progress: 100,
 				sub_size: 0,
-                url_path: "",
-                redirect_path: "",
-				wdav_path: ""
-            },
-            server_info: {
-                disk_free: 0,
-                disk_used: 0
-            }
+				url_path: "",
+				redirect_path: "",
+				wdav_path: "",
+				downloads_allowed_left: 1
+			},
+			server_info: {
+				disk_free: 0,
+				disk_used: 0
+			}
 		};
-    },
-    computed: {
-        isComplete () {
-            return this.file_edit.name && this.file_edit.mime_type && this.file_edit.url_path && (this.file_edit.ref_sub_file == 0 || (this.file_edit.sub_name && this.file_edit.sub_mime_type));
-        }
-    },
+	},
+	computed: {
+		isComplete () {
+			if (this.file_edit.downloads_allowed_left === "" || this.file_edit.downloads_allowed_left === undefined) {
+				this.file_edit.downloads_allowed_left = -1;
+			}
+			else if (isNaN(this.file_edit.downloads_allowed_left)) {
+				return false
+			}
+			else {
+				this.file_edit.downloads_allowed_left = parseInt(this.file_edit.downloads_allowed_left)
+				if (this.file_edit.downloads_allowed_left <= 0) {
+					return false
+				}
+			}
+			return this.file_edit.name && this.file_edit.mime_type && this.file_edit.url_path && (this.file_edit.ref_sub_file == 0 || (this.file_edit.sub_name && this.file_edit.sub_mime_type));
+		}
+	},
 	methods: {
+		isNumber: function($event) {
+			$event = ($event) ? $event : window.event;
+			var charCode = ($event.which) ? $event.which : $event.keyCode;
+			if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 46) {
+				$event.preventDefault();
+			} else {
+				return true;
+			}
+		},
 		doShuffle() {
 			this.uploads = _.shuffle(this.uploads);
 		},
@@ -324,18 +364,19 @@ var appFileView = Vue.component("app-file-view", {
 					id: item_id,
 					name: file.name,
 					fsize: file.size,
-                    mime_type: file.type,
-                    sub_mime_type: file.sub_mime_type,
+					mime_type: file.type,
+					sub_mime_type: file.sub_mime_type,
 					orig_mime_type: file.type,
-                    url_path: "",
-                    redirect_path: "",
+					url_path: "",
+					redirect_path: "",
 					wdav_path: "",
 					progress: 0,
 					key: this.next_key,
 					is_enabled: true,
 					is_paused: false,
-                    sub_name: "",
-                    sub_file: null,
+					sub_name: "",
+					sub_file: null,
+					downloads_allowed_left: -1
 				};
 				vm.uploads.push(item);
 				this.next_key += 1;
@@ -369,12 +410,17 @@ var appFileView = Vue.component("app-file-view", {
 							var ut = vm.uploads[i];
 
 							ut.id = it.id;
-                            ut.url_path = it.url_path;
-                            ut.redirect_path = it.redirect_path;
-                            ut.wdav_path = it.wdav_path;
-                            ut.mime_type = it.mime_type;
-                            ut.sub_mime_type = it.sub_mime_type;
-                            ut.orig_mime_type = it.orig_mime_type;
+							ut.url_path = it.url_path;
+							ut.redirect_path = it.redirect_path;
+							ut.wdav_path = it.wdav_path;
+							ut.mime_type = it.mime_type;
+							ut.sub_mime_type = it.sub_mime_type;
+							ut.orig_mime_type = it.orig_mime_type;
+							if (it.downloads_allowed_left == -1) {
+								ut.downloads_allowed_left = "";
+							} else {
+								ut.downloads_allowed_left = it.downloads_allowed_left;
+							}
 							ut.progress = 100;
 
 							//it.progress = 100;
@@ -385,22 +431,22 @@ var appFileView = Vue.component("app-file-view", {
 							//vm.next_key += 1;
 							//vm.uploads[i].id = item_id;
 							//vm.uploads.splice(i, 1, it);
-                            //vm.uploads[i].progress = 100;
-                            
+							//vm.uploads[i].progress = 100;
+
 							//vm.uploads.sort((a, b) => a.key - b.key);
-                        }
-                        this.syncServerInfo();
+						}
+						this.syncServerInfo();
 
 						console.log(vm.uploads);
 					})
 					.catch(error => {
-                        console.log(error)
+						console.log(error)
 
-                        var i = vm.findFileIndexById(item_id);
+						var i = vm.findFileIndexById(item_id);
 						if (i != -1) {
-						    vm.uploads.splice(i, 1);
-                        }
-                    });
+							vm.uploads.splice(i, 1);
+						}
+					});
 			}
 		},
 		handleSubFile($event) {
@@ -479,12 +525,12 @@ var appFileView = Vue.component("app-file-view", {
 								id: it.id,
 								name: it.name,
 								uid: it.uid
-                            };
-                            f.sub_name = it.name;
-                            console.log(f);
-                        }
-                        
-                        this.syncServerInfo();
+							};
+							f.sub_name = it.name;
+							console.log(f);
+						}
+
+						this.syncServerInfo();
 					})
 					.catch(error => console.log(error));
 			}
@@ -495,15 +541,25 @@ var appFileView = Vue.component("app-file-view", {
 				console.log("file not found: " + id);
 				return;
 			}
+			//if (!isNaN(this.file_edit.downloads_allowed_left)) {
+			//	this.file_edit.downloads_allowed_left = parseInt(this.file_edit.downloads_allowed_left);
+			//}
+			//else {
+			//	this.file_edit.downloads_allowed_left = -1;
+			//}
+			if (this.uploads[i].downloads_allowed_left < 1) {
+				this.uploads[i].downloads_allowed_left = "";
+			}
 			this.file_edit.id = id;
 			this.file_edit.name = this.uploads[i].name;
-            this.file_edit.mime_type = this.uploads[i].mime_type;
-            this.file_edit.sub_mime_type = this.uploads[i].sub_mime_type;
+			this.file_edit.mime_type = this.uploads[i].mime_type;
+			this.file_edit.sub_mime_type = this.uploads[i].sub_mime_type;
 			this.file_edit.orig_mime_type = this.uploads[i].orig_mime_type;
 			this.file_edit.url_path = this.uploads[i].url_path;
 			this.file_edit.redirect_path = this.uploads[i].redirect_path;
 			this.file_edit.wdav_path = this.uploads[i].wdav_path;
 			this.file_edit.ref_sub_file = this.uploads[i].ref_sub_file;
+			this.file_edit.downloads_allowed_left = this.uploads[i].downloads_allowed_left;
 			this.file_edit.sub_name = "<unknown>";
 			this.file_edit.sub_size = 0;
 			this.file_edit.sub_ctime = 0;
@@ -520,14 +576,20 @@ var appFileView = Vue.component("app-file-view", {
 			this.$bvModal.show("edit-modal");
 		},
 		updateFile() {
-            var vm = this;
+			var vm = this;
 			if (!this.file_edit) {
 				return;
-            }
-            if (!this.isComplete) {
-                return;
-            }
+			}
+			if (!this.isComplete) {
+				return;
+			}
 			var id = this.file_edit.id;
+			if (!isNaN(this.file_edit.downloads_allowed_left)) {
+				this.file_edit.downloads_allowed_left = parseInt(this.file_edit.downloads_allowed_left);
+			}
+			else {
+				this.file_edit.downloads_allowed_left = -1;
+			}
 			axios
 				.put(
 					this.url + "/files/" + id,
@@ -535,9 +597,10 @@ var appFileView = Vue.component("app-file-view", {
 						name: this.file_edit.name,
 						url_path: this.file_edit.url_path,
 						redirect_path: this.file_edit.redirect_path,
-                        mime_type: this.file_edit.mime_type,
-                        sub_mime_type: this.file_edit.sub_mime_type,
-						sub_name: this.file_edit.sub_name
+						mime_type: this.file_edit.mime_type,
+						sub_mime_type: this.file_edit.sub_mime_type,
+						sub_name: this.file_edit.sub_name,
+						downloads_allowed_left: this.file_edit.downloads_allowed_left
 					},
 					{
 						headers: {
@@ -556,8 +619,14 @@ var appFileView = Vue.component("app-file-view", {
 						vm.uploads[i].sub_name = f.sub_name;
 						vm.uploads[i].url_path = f.url_path;
 						vm.uploads[i].redirect_path = f.redirect_path;
-                        vm.uploads[i].mime_type = f.mime_type;
-                        vm.uploads[i].sub_mime_type = f.sub_mime_type;                       
+						vm.uploads[i].mime_type = f.mime_type;
+						vm.uploads[i].sub_mime_type = f.sub_mime_type;
+						if (f.downloads_allowed_left < 1) {
+							vm.uploads[i].downloads_allowed_left = "";
+						}
+						else {
+							vm.uploads[i].downloads_allowed_left = f.downloads_allowed_left;
+						}
 					}
 				})
 				.catch(error => {
@@ -572,8 +641,8 @@ var appFileView = Vue.component("app-file-view", {
 					var i = this.findFileIndexById(id);
 					if (i != -1) {
 						this.uploads.splice(i, 1);
-                    }
-                    this.syncServerInfo();
+					}
+					this.syncServerInfo();
 				})
 				.catch(error => {
 					console.log(error);
@@ -647,8 +716,8 @@ var appFileView = Vue.component("app-file-view", {
 						this.uploads[i].sub_name = "";
 						this.uploads[i].sub_file = null;
 						this.uploads[i].is_paused = false;
-                    }
-                    this.syncServerInfo();
+					}
+					this.syncServerInfo();
 				})
 				.catch(error => {
 					console.log(error);
@@ -670,6 +739,9 @@ var appFileView = Vue.component("app-file-view", {
 				.then(response => {
 					console.log(response);
 					var files = response.data.data.uploads;
+					if (files === null) {
+						files = []
+					}
 					t.uploads = [];
 					for (var i = 0; i < files.length; i++) {
 						t.uploads.push(files[i]);
@@ -679,21 +751,21 @@ var appFileView = Vue.component("app-file-view", {
 				})
 				.catch(error => console.log(error));
 		},
-        syncServerInfo() {
-            axios
-                .get(this.url + "/server_info")
-                .then(response => {
-                    var r = response.data.data;
+		syncServerInfo() {
+			axios
+				.get(this.url + "/server_info")
+				.then(response => {
+					var r = response.data.data;
 
-                    this.server_info.disk_free = r.disk_free;
-                    this.server_info.disk_used = r.disk_used;
+					this.server_info.disk_free = r.disk_free;
+					this.server_info.disk_used = r.disk_used;
 
-                    console.log(r);
-                })
-                .catch(error => {
-                    console.log(error);
-                });
-        }
+					console.log(r);
+				})
+				.catch(error => {
+					console.log(error);
+				});
+		}
 	},
 	created() {
 		var t = this;
@@ -701,8 +773,8 @@ var appFileView = Vue.component("app-file-view", {
 			if (!t.editShow) {
 				t.isDragging = true;
 			}
-        });
-        this.syncServerInfo();
-        this.refresh();
+		});
+		this.syncServerInfo();
+		this.refresh();
 	}
 })

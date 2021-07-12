@@ -80,6 +80,32 @@ var appHome = Vue.component("app-home", {
                     <div v-show="errors.has('cookie-token')" class="form-error">{{ errors.first('cookie-token') }}</div>
                 </div>
             </div>
+            <div class="form-group row">
+                <label for="white-list" class="col-sm-3 col-form-label label-help">IPs white list:
+                    <i class="fas fa-question-circle label-qmark" v-tooltip:bottom="'White list of IPs/Networks that will be allowed to download payloads, separated by comma.'"></i>
+                </label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" id="white-list" placeholder="1.1.1.1,2.2.2.0/24" spellcheck="false"
+                        v-model="config.white_list"
+                        name="white-list"
+                        v-bind:class="{'form-control': true, 'error': errors.has('white-list') }"
+                    >
+                    <div v-show="errors.has('white-list')" class="form-error">{{ errors.first('white-list') }}</div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="black-list" class="col-sm-3 col-form-label label-help">IPs black list:
+                    <i class="fas fa-question-circle label-qmark" v-tooltip:bottom="'Black list of IPs/Networks that will be NOT allowed to download payloads, separated by comma.'"></i>
+                </label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" id="black-list" placeholder="3.3.3.3,4.4.0.0/16" spellcheck="false"
+                        v-model="config.black_list"
+                        name="black-list"
+                        v-bind:class="{'form-control': true, 'error': errors.has('black-list') }"
+                    >
+                    <div v-show="errors.has('black-list')" class="form-error">{{ errors.first('black-list') }}</div>
+                </div>
+            </div>
         </form>
     </b-modal>
 
@@ -113,7 +139,9 @@ var appHome = Vue.component("app-home", {
 				secret_path: "",
 				redirect_url: "",
 				cookie_name: "",
-				cookie_token: ""
+				cookie_token: "",
+				white_list: "",
+				black_list: ""
             },
             configShow: false,
             version: "-"
@@ -184,6 +212,8 @@ var appHome = Vue.component("app-home", {
 					this.config.redirect_url = r.redirect_url;
 					this.config.cookie_name = r.cookie_name;
 					this.config.cookie_token = r.cookie_token;
+					this.config.white_list = r.white_list;
+					this.config.black_list = r.black_list;
 
 					this.$bvModal.show("config-modal");
 				})
@@ -202,7 +232,9 @@ var appHome = Vue.component("app-home", {
 						secret_path: this.config.secret_path,
 						redirect_url: this.config.redirect_url,
 						cookie_name: this.config.cookie_name,
-						cookie_token: this.config.cookie_token
+						cookie_token: this.config.cookie_token,
+						white_list: this.config.white_list,
+						black_list: this.config.black_list
 					},
 					{
 						headers: {

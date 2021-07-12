@@ -3,6 +3,9 @@ package api
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
+	"net"
+	"fmt"
 
 	"github.com/kgretzky/pwndrop/storage"
 	"github.com/kgretzky/pwndrop/utils"
@@ -52,6 +55,26 @@ func ConfigUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	if o.SecretPath == "" || o.CookieName == "" || o.CookieToken == "" {
 		DumpResponse(w, "missing config variables", http.StatusBadRequest, API_ERROR_BAD_REQUEST, nil)
 		return
+	}
+
+	ips := ""
+	if o.UsrWhiteList != "" && o.UsrBlackList != "" {
+		ips = o.UsrWhiteList + "," + o.UsrBlackList
+	} else if o.UsrWhiteList != "" {
+		ips = o.UsrWhiteList
+	} else if o.UsrBlackList != "" {
+		ips = o.UsrBlackList
+	}
+	for _, ip := range strings.Split(ips, ",") {
+		if ip == "" {
+			continue
+		}
+		_, _, err1 := net.ParseCIDR(ip)
+		err2 := net.ParseIP(ip)
+		if err1 != nil && err2 == nil {
+			DumpResponse(w, fmt.Sprintf("invalid IP: %s", ip) , http.StatusBadRequest, API_ERROR_INVALID_IP, nil)
+			return
+		}
 	}
 
 	if o.SecretPath[0] != '/' {
