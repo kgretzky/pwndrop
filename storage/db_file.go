@@ -5,21 +5,22 @@ import (
 )
 
 type DbFile struct {
-	ID           int    `json:"id" storm:"id,increment"`
-	Uid          int    `json:"uid" storm:"index"`
-	Name         string `json:"name"`
-	Filename     string `json:"fname"`
-	FileSize     int64  `json:"fsize"`
-	UrlPath      string `json:"url_path" storm:"unique"`
-	MimeType     string `json:"mime_type"`
-	OrigMimeType string `json:"orig_mime_type"`
-	CreateTime   int64  `json:"create_time" storm:"index"`
-	IsEnabled    bool   `json:"is_enabled"`
-	IsPaused     bool   `json:"is_paused"`
-	RedirectPath string `json:"redirect_path" storm:"unique"`
-	SubName      string `json:"sub_name"`
-	SubMimeType  string `json:"sub_mime_type"`
-	RefSubFile   int    `json:"ref_sub_file"`
+	ID                   int    `json:"id" storm:"id,increment"`
+	Uid                  int    `json:"uid" storm:"index"`
+	Name                 string `json:"name"`
+	Filename             string `json:"fname"`
+	FileSize             int64  `json:"fsize"`
+	UrlPath              string `json:"url_path" storm:"unique"`
+	MimeType             string `json:"mime_type"`
+	OrigMimeType         string `json:"orig_mime_type"`
+	CreateTime           int64  `json:"create_time" storm:"index"`
+	IsEnabled            bool   `json:"is_enabled"`
+	IsPaused             bool   `json:"is_paused"`
+	RedirectPath         string `json:"redirect_path" storm:"unique"`
+	SubName              string `json:"sub_name"`
+	SubMimeType          string `json:"sub_mime_type"`
+	RefSubFile           int    `json:"ref_sub_file"`
+	DownloadsAllowedLeft int    `json:"downloads_allowed_left"`
 }
 
 func FileCreate(o *DbFile) (*DbFile, error) {
@@ -106,7 +107,7 @@ func FileDelete(id int) error {
 }
 
 func FileUpdate(id int, o *DbFile) (*DbFile, error) {
-	if err := db.Update(&DbFile{ID: id, Name: o.Name, UrlPath: o.UrlPath, MimeType: o.MimeType, RefSubFile: o.RefSubFile, SubName: o.SubName, RedirectPath: o.RedirectPath, SubMimeType: o.SubMimeType}); err != nil {
+	if err := db.Update(&DbFile{ID: id, Name: o.Name, UrlPath: o.UrlPath, MimeType: o.MimeType, RefSubFile: o.RefSubFile, SubName: o.SubName, RedirectPath: o.RedirectPath, SubMimeType: o.SubMimeType, DownloadsAllowedLeft: o.DownloadsAllowedLeft}); err != nil {
 		return nil, err
 	}
 	if err := db.UpdateField(&DbFile{ID: id}, "RedirectPath", o.RedirectPath); err != nil {
@@ -130,6 +131,15 @@ func FileEnable(id int, enable bool) (*DbFile, error) {
 	if err := db.UpdateField(&DbFile{ID: id}, "IsEnabled", enable); err != nil {
 		return nil, err
 	}
+	old, err := FileGet(id)
+	if err != nil {
+		return nil, err
+	}
+	if enable && old.DownloadsAllowedLeft == 0 {
+		if err := db.UpdateField(&DbFile{ID: id}, "DownloadsAllowedLeft", 1); err != nil {
+			return nil, err
+		}
+	}
 	o, err := FileGet(id)
 	if err != nil {
 		return nil, err
@@ -147,3 +157,27 @@ func FilePause(id int, pause bool) (*DbFile, error) {
 	}
 	return o, nil
 }
+
+func FileServed(id int) (*DbFile, error) {
+	old, err := FileGet(id)
+	if err != nil {
+		return nil, err
+	}
+	if old.DownloadsAllowedLeft == 1 {
+		_, err := FileEnable(id, false)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if old.DownloadsAllowedLeft > 0 {
+		if err := db.UpdateField(&DbFile{ID: id}, "DownloadsAllowedLeft", old.DownloadsAllowedLeft - 1); err != nil {
+			return nil, err
+		}
+	}
+	o, err := FileGet(id)
+	if err != nil {
+		return nil, err
+	}
+	return o, nil
+}
+

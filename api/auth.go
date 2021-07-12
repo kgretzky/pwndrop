@@ -103,6 +103,7 @@ func LoginUserHandler(w http.ResponseWriter, r *http.Request) {
 		Path:     "/",
 		MaxAge:   24 * 60 * 60,
 		HttpOnly: true,
+		SameSite: 2, // Lax
 		Name:     AUTH_COOKIE_NAME,
 		Value:    token,
 	}
@@ -231,6 +232,7 @@ func deleteCookie(name string, w http.ResponseWriter) {
 		Path:     "/",
 		MaxAge:   -1,
 		HttpOnly: true,
+		SameSite: 2, // LAx
 		Name:     name,
 		Value:    "",
 	}

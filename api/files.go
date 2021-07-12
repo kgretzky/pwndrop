@@ -28,6 +28,10 @@ func FileCreateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data_dir := Cfg.GetDataDir()
+	download_dir := Cfg.GetDownloadDir()
+	if download_dir == "" {
+		download_dir = "/" + utils.GenRandomString(8) // TODO: make sure the generated folder is unique
+	}
 	user_id := 1
 
 	file, fhead, err := r.FormFile("file")
@@ -39,7 +43,7 @@ func FileCreateHandler(w http.ResponseWriter, r *http.Request) {
 
 	name := fhead.Filename
 	fname := utils.GenRandomHash()
-	url_path := "/" + utils.GenRandomString(8) + "/" + name // TODO: make sure the generated folder is unique
+	url_path := filepath.Join(download_dir, name)
 	mime_type := fhead.Header.Get("content-type")           //r.Header.Get("content-type")
 	if mime_type == "" {
 		mime_type = "application/octet-stream"
@@ -61,19 +65,20 @@ func FileCreateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	o := &storage.DbFile{
-		Uid:          user_id,
-		Name:         name,
-		Filename:     fname,
-		FileSize:     fi.Size(),
-		UrlPath:      url_path,
-		RedirectPath: "",
-		MimeType:     mime_type,
-		SubMimeType:  mime_type,
-		OrigMimeType: mime_type,
-		CreateTime:   time.Now().Unix(),
-		IsEnabled:    true,
-		IsPaused:     false,
-		RefSubFile:   0,
+		Uid:              user_id,
+		Name:             name,
+		Filename:         fname,
+		FileSize:         fi.Size(),
+		UrlPath:          url_path,
+		RedirectPath:     "",
+		MimeType:         mime_type,
+		SubMimeType:      mime_type,
+		OrigMimeType:     mime_type,
+		CreateTime:       time.Now().Unix(),
+		IsEnabled:        true,
+		IsPaused:         false,
+		RefSubFile:       0,
+		DownloadsAllowedLeft: 1,
 	}
 
 	f, err := storage.FileCreate(o)

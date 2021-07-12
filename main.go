@@ -91,6 +91,11 @@ func main() {
 	}
 	api.SetConfig(core.Cfg)
 
+	logfile := core.Cfg.GetLogFile()
+	if logfile != "" {
+		log.SetLogFile(logfile)
+	}
+
 	if *debug_log {
 		log.SetVerbosityLevel(0)
 	}

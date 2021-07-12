@@ -6,10 +6,10 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/kgretzky/pwndrop/log"
+	"github.com/kgretzky/pwndrop/storage"
 )
 
 const BLACKLIST_JAIL_TIME_SECS = 10 * 60
@@ -34,10 +34,7 @@ func NewHttp(srv *Server) (*Http, error) {
 func (s *Http) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	data_dir := Cfg.GetDataDir()
 
-	from_ip := r.RemoteAddr
-	if strings.Contains(from_ip, ":") {
-		from_ip = strings.Split(from_ip, ":")[0]
-	}
+	from_ip := GetIP(r)
 
 	if r.Method == "GET" {
 		f, status, err := s.srv.GetFile(r.URL.Path)
@@ -70,6 +67,7 @@ func (s *Http) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", mime_type)
 			w.WriteHeader(200)
 			io.Copy(w, fo)
+			storage.FileServed(f.ID)
 		}
 		return
 	}

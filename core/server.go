@@ -151,15 +151,73 @@ func NewServer(host string, port_plain int, port_tls int, enable_letsencrypt boo
 	return s, nil
 }
 
-func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	log.Debug("%s %s", r.Method, r.URL.Path)
-
+func GetIP(r *http.Request) string {
 	from_ip := r.RemoteAddr
 	if strings.Contains(from_ip, ":") {
 		from_ip = strings.Split(from_ip, ":")[0]
 	}
 
-	if s.isBlacklisted(from_ip) {
+	// if pwndrop is behind a redirector, then the actual IP is in the 'X-Forwarded-Host' or 'X-Forwarded-For' header
+	trust_x_forwarded_for := Cfg.GetTrustForwarded()
+	if trust_x_forwarded_for {
+		x_forwarded_host := r.Header.Get("X-Forwarded-Host")
+		if net.ParseIP(x_forwarded_host) != nil {
+			from_ip = x_forwarded_host
+		} else {
+			x_forwarded_for := r.Header.Get("X-Forwarded-For")
+			if strings.Contains(x_forwarded_for, ", ") {
+				x_forwarded_for = strings.Split(x_forwarded_for, ", ")[0]
+			}
+			if net.ParseIP(x_forwarded_for) != nil {
+				from_ip = x_forwarded_for
+			}
+		}
+	}
+	return from_ip
+}
+
+func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	from_ip := GetIP(r)
+	if from_ip != "127.0.0.1" {
+		log.Debug("%s (UA: %s) - %s %s", from_ip, r.Header.Get("User-Agent"), r.Method, r.URL.Path)
+	}
+
+	// user-defined whitelist
+	usr_white_list := Cfg.GetUserWhiteList()
+	user_allowed := true
+	if usr_white_list != "" && from_ip != "127.0.0.1" {
+		user_allowed = false
+		ip_list := strings.Split(usr_white_list, ",")
+		for _, allowed_ip := range ip_list {
+			_, block, err := net.ParseCIDR(allowed_ip)
+			if (err == nil && block.Contains(net.ParseIP(from_ip))) || (err != nil && allowed_ip == from_ip) {
+				user_allowed = true
+				break
+			}
+		}
+		if !user_allowed {
+			log.Info("The IP %s is not in the white list", from_ip)
+		}
+	}
+
+	// user-defined blacklist
+	usr_black_list := Cfg.GetUserBlackList()
+	user_disallowed := false
+	if usr_black_list != "" && from_ip != "127.0.0.1" {
+		ip_list := strings.Split(usr_black_list, ",")
+		for _, disallowed_ip := range ip_list {
+			_, block, err := net.ParseCIDR(disallowed_ip)
+			if (err == nil && block.Contains(net.ParseIP(from_ip))) || (err != nil && disallowed_ip == from_ip) {
+				user_disallowed = true
+				break
+			}
+		}
+		if user_disallowed {
+			log.Info("The IP %s is in the black list", from_ip)
+		}
+	}
+
+	if !user_allowed || user_disallowed || s.isBlacklisted(from_ip) {
 		err := s.killConnection(w, -1)
 		if err != nil {
 			log.Error("http: %s (%s)", err, from_ip)
@@ -181,6 +239,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				Path:     "/",
 				Expires:  time.Now().AddDate(0, 3, 0),
 				HttpOnly: true,
+				SameSite: 2, // Lax
 				Name:     cookie_name,
 				Value:    cookie_token,
 			}
@@ -270,6 +329,7 @@ func (s *Server) GetFile(url string) (*storage.DbFile, int, error) {
 		}
 		is_redirect = true
 	}
+
 	if !f.IsEnabled {
 		return nil, 404, fmt.Errorf("file is disabled")
 	}
@@ -321,6 +381,9 @@ func (s *Server) killConnection(w http.ResponseWriter, status int) error {
 }
 
 func (s *Server) isBlacklisted(ip_addr string) bool {
+	if ip_addr == "127.0.0.1" {
+		return false
+	}
 	s.bl_mtx.Lock()
 	defer s.bl_mtx.Unlock()
 
