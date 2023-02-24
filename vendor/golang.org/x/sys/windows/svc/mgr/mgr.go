@@ -2,13 +2,13 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
+//go:build windows
 // +build windows
 
 // Package mgr can be used to manage Windows service programs.
 // It can be used to install and remove them. It can also start,
 // stop and pause them. The package can query / change current
 // service state and config parameters.
-//
 package mgr
 
 import (
@@ -17,6 +17,7 @@ import (
 	"unicode/utf16"
 	"unsafe"
 
+	"golang.org/x/sys/internal/unsafeheader"
 	"golang.org/x/sys/windows"
 )
 
@@ -73,7 +74,7 @@ func (m *Mgr) LockStatus() (*LockStatus, error) {
 		status := &LockStatus{
 			IsLocked: lockStatus.IsLocked != 0,
 			Age:      time.Duration(lockStatus.LockDuration) * time.Second,
-			Owner:    windows.UTF16ToString((*[(1 << 30) - 1]uint16)(unsafe.Pointer(lockStatus.LockOwner))[:]),
+			Owner:    windows.UTF16PtrToString(lockStatus.LockOwner),
 		}
 		return status, nil
 	}
@@ -115,9 +116,6 @@ func toStringBlock(ss []string) *uint16 {
 func (m *Mgr) CreateService(name, exepath string, c Config, args ...string) (*Service, error) {
 	if c.StartType == 0 {
 		c.StartType = StartManual
-	}
-	if c.ErrorControl == 0 {
-		c.ErrorControl = ErrorNormal
 	}
 	if c.ServiceType == 0 {
 		c.ServiceType = windows.SERVICE_WIN32_OWN_PROCESS
@@ -201,10 +199,16 @@ func (m *Mgr) ListServices() ([]string, error) {
 	if servicesReturned == 0 {
 		return nil, nil
 	}
-	services := (*[1 << 20]windows.ENUM_SERVICE_STATUS_PROCESS)(unsafe.Pointer(&buf[0]))[:servicesReturned]
+
+	var services []windows.ENUM_SERVICE_STATUS_PROCESS
+	hdr := (*unsafeheader.Slice)(unsafe.Pointer(&services))
+	hdr.Data = unsafe.Pointer(&buf[0])
+	hdr.Len = int(servicesReturned)
+	hdr.Cap = int(servicesReturned)
+
 	var names []string
 	for _, s := range services {
-		name := syscall.UTF16ToString((*[1 << 20]uint16)(unsafe.Pointer(s.ServiceName))[:])
+		name := windows.UTF16PtrToString(s.ServiceName)
 		names = append(names, name)
 	}
 	return names, nil
